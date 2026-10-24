@@ -122,3 +122,14 @@ async def create_category(data: CategoryCreate, session: Session = Depends(get_s
     repo = CategoryRepository(session)
     category = Category(**data.model_dump())
     return repo.add(category)
+
+@app.get("/products", response_model=list[ProductResponse])
+async def get_products(
+    category_id: int | None = None,
+    limit: int = 10,
+    offset: int = 0,
+    session: Session = Depends(get_session),
+):
+    repo = ProductRepository(session)
+    products = repo.get_all(category_id=category_id)
+    return products[offset : offset + limit]
